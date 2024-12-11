@@ -1,0 +1,44 @@
+#feedback-form {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+#feedback-form label {
+    display: block;
+    margin-bottom: 5px;
+}
+#feedback-form input, #feedback-form textarea, #feedback-form select {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+}
+#feedback-form button {
+    background: #0073aa;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 50px;
+}
+
+
+/* rating stars styles */
+.star-rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+.star {
+    font-size: 2rem;
+    color: #ccc;
+    transition: color 0.2s ease-in-out;
+}
+.star.selected,
+.star:hover,
+.star:hover ~ .star {
+    color: gold;
+}
