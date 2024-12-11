@@ -14,6 +14,7 @@ if (!defined('ABSPATH')) {
 require_once plugin_dir_path(__FILE__) . 'includes/class-database-setup.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-feedback-form.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-feedback-admin.php'; 
+require_once plugin_dir_path(__FILE__) . 'includes/class-init-rest-api.php'; 
 
 // Activate the plugin
 register_activation_hook(__FILE__, ['Database_Setup', 'create_feedback_table']);
