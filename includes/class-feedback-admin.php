@@ -42,7 +42,7 @@ class Feedback_Admin {
                 <input type="text" name="search" placeholder="Search by name or email">
                 <button type="submit" class="button">Search</button>
             </form>
-    
+        
             <form method="POST" id="bulk-delete-form">
                 <input type="hidden" name="action" value="bulk_delete">
                 <table class="wp-list-table widefat fixed striped">
@@ -55,19 +55,18 @@ class Feedback_Admin {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td colspan="4">No feedback found.</td>
-                        </tr>
+                        <?php self::list_feedback_entries(); ?>
                     </tbody>
                 </table>
                 <button type="submit" class="button button-primary">Delete Selected</button>
             </form>
-    
+        
             <h2>Average Rating Over the Last 7 Days</h2>
             <canvas id="feedback-chart" width="400" height="200"></canvas>
         </div>
         <?php
     }
+    
     
 
     private static function list_feedback_entries() {
