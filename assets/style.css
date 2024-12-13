@@ -1,3 +1,4 @@
+
 #feedback-form {
     max-width: 400px;
     margin: 20px auto;
@@ -65,4 +66,6 @@
     color: #fff;
     border-color: #0073aa;
 }
-
+#bulk-delete-form > button{
+    margin-top: 8px;
+}

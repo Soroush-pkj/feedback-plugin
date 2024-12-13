@@ -30,7 +30,7 @@ class Feedback_Form {
         return ob_get_clean();
     }
     
-
+    
     public static function handle_form_submission() {
         global $wpdb;
 

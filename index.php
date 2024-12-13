@@ -15,6 +15,7 @@ require_once plugin_dir_path(__FILE__) . 'includes/class-database-setup.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-feedback-form.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-feedback-admin.php'; 
 require_once plugin_dir_path(__FILE__) . 'includes/class-init-rest-api.php'; 
+require_once plugin_dir_path(__FILE__) . 'includes/class-role-manager.php'; 
 
 // Activate the plugin
 register_activation_hook(__FILE__, ['Database_Setup', 'create_feedback_table']);
@@ -34,12 +35,12 @@ function mfp_enqueue_assets() {
 }
 
 // Manage capabilities
-register_activation_hook(__FILE__, function () {
-    $role = get_role('administrator');
-    if ($role) {
-        $role->add_cap('manage_feedback');
-    }
-});
+// register_activation_hook(__FILE__, function () {
+//     $role = get_role('administrator');
+//     if ($role) {
+//         $role->add_cap('manage_feedback');
+//     }
+// });
 
 // register_deactivation_hook(__FILE__, function () {
 //     $role = get_role('administrator');
