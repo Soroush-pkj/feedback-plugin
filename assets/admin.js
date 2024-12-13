@@ -1,21 +1,27 @@
-jQuery(document).ready(function ($) {
+document.addEventListener('DOMContentLoaded', function () {
     // بارگذاری داده‌های نمودار
-    $.post(feedbackAjax.ajax_url, { 
-        action: 'fetch_chart_data', 
-        _ajax_nonce: feedbackAjax.nonce 
-    }, function (response) {
-        if (response.success) {
-            const labels = response.data.map(entry => entry.date);
-            const data = response.data.map(entry => parseFloat(entry.avg_rating));
+    const formData = new FormData();
+    formData.append('action', 'fetch_chart_data');
+    formData.append('_ajax_nonce', feedbackAjax.nonce);
 
-            const ctx = $('#feedback-chart');
+    fetch(feedbackAjax.ajax_url, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const labels = data.data.map(entry => entry.date);
+            const chartData = data.data.map(entry => parseFloat(entry.avg_rating));
+
+            const ctx = document.getElementById('feedback-chart').getContext('2d');
             new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: labels,
                     datasets: [{
                         label: 'Average Rating',
-                        data: data,
+                        data: chartData,
                         borderColor: 'rgba(75, 192, 192, 1)',
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
                         fill: true,
@@ -46,7 +52,27 @@ jQuery(document).ready(function ($) {
                 }
             });
         } else {
-            console.error(response.data.message || 'Error fetching chart data.');
+            console.error(data.data.message || 'Error fetching chart data.');
         }
+    })
+    .catch(error => console.error('Error:', error));
+
+    // bulk delete
+    jQuery(document).ready(function($) {
+        // Select All checkbox functionality
+        $('#select-all').on('change', function() {
+            $('input[name="bulk_delete_ids[]"]').prop('checked', this.checked);
+        });
+
+        // Handle bulk delete form submission
+        $('#bulk-delete-form').on('submit', function(e) {
+            e.preventDefault(); // جلوگیری از ارسال خودکار فرم
+
+            // Show confirmation prompt
+            if (confirm('Are you sure you want to delete selected feedback?')) {
+                // Manually submit the form if confirmed
+                this.submit();
+            }
+        });
     });
 });

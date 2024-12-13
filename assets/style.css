@@ -42,3 +42,27 @@
 .star:hover ~ .star {
     color: gold;
 }
+
+
+/* pagination */
+.pagination {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.pagination-link {
+    margin: 0 5px;
+    padding: 5px 10px;
+    text-decoration: none;
+    border: 1px solid #ddd;
+    background: #f9f9f9;
+    color: #0073aa;
+}
+
+.pagination-link.current {
+    font-weight: bold;
+    background: #0073aa;
+    color: #fff;
+    border-color: #0073aa;
+}
+

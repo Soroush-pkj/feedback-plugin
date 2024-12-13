@@ -41,13 +41,17 @@ register_activation_hook(__FILE__, function () {
     }
 });
 
-register_deactivation_hook(__FILE__, function () {
-    $role = get_role('administrator');
-    if ($role) {
-        $role->remove_cap('manage_feedback');
-    }
-});
+// register_deactivation_hook(__FILE__, function () {
+//     $role = get_role('administrator');
+//     if ($role) {
+//         $role->remove_cap('manage_feedback');
+//     }
+// });
 
 // Initial AJAX for admin
+add_action('admin_post_bulk_delete', [Feedback_Admin::class, 'handle_bulk_delete']);
 add_action('wp_ajax_fetch_chart_data', ['Feedback_Admin', 'handle_chart_data']);
-add_action('admin_post_bulk_delete', ['Feedback_Admin', 'handle_bulk_delete']);
+// add_action('admin_post_bulk_delete', ['Feedback_Admin', 'handle_bulk_delete']);
+
+
+

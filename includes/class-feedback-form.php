@@ -18,7 +18,7 @@ class Feedback_Form {
             <textarea id="feedback" name="feedback" required></textarea>
             <label for="rating">Rating:</label>
             <div class="star-rating" id="star-rating">
-                <?php for ($i = 1; $i <= 5; $i++): ?>
+                <?php for ($i = 5; $i >= 1; $i--): ?>
                     <span class="star" data-value="<?php echo $i; ?>">&#9733;</span>
                 <?php endfor; ?>
             </div>
