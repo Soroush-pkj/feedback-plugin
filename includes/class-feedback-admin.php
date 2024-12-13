@@ -63,7 +63,7 @@ class Feedback_Admin
                             <th><a href="?page=feedback-report&orderby=email&order=<?php echo $current_order; ?>">Email</a></th>
                             <th><a href="?page=feedback-report&orderby=name&order=<?php echo $current_order; ?>">Name</a></th>
                             <th><a href="?page=feedback-report&orderby=rating&order=<?php echo $current_order; ?>">Rating</a></th>
-                            <th><a href="?page=feedback-report&orderby=date&order=<?php echo $current_order; ?>">Date</a></th>
+                            <th><a href="?page=feedback-report&orderby=created_at&order=<?php echo $current_order; ?>">Date</a></th>
 
                         </tr>
                     </thead>
