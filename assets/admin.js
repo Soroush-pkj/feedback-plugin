@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // بارگذاری داده‌های نمودار
+    // chart loading
+
     const formData = new FormData();
     formData.append('action', 'fetch_chart_data');
     formData.append('_ajax_nonce', feedbackAjax.nonce);
@@ -58,21 +59,26 @@ document.addEventListener('DOMContentLoaded', function () {
     .catch(error => console.error('Error:', error));
 
     // bulk delete
-    jQuery(document).ready(function($) {
-        // Select All checkbox functionality
-        $('#select-all').on('change', function() {
-            $('input[name="bulk_delete_ids[]"]').prop('checked', this.checked);
+    document.addEventListener('DOMContentLoaded', function() {
+        // Select "select-all" checkbox and feedback checkboxes
+        const selectAll = document.getElementById('select-all');
+        const feedbackCheckboxes = document.querySelectorAll('input[name="bulk_delete_ids[]"]');
+        const bulkDeleteForm = document.getElementById('bulk-delete-form');
+    
+        // Event listener for select-all checkbox
+        selectAll.addEventListener('change', function() {
+            feedbackCheckboxes.forEach(function(checkbox) {
+                checkbox.checked = selectAll.checked;
+            });
         });
-
-        // Handle bulk delete form submission
-        $('#bulk-delete-form').on('submit', function(e) {
-            e.preventDefault(); // جلوگیری از ارسال خودکار فرم
-
-            // Show confirmation prompt
+    
+        // Event listener for form submission
+        bulkDeleteForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+    
             if (confirm('Are you sure you want to delete selected feedback?')) {
-                // Manually submit the form if confirmed
                 this.submit();
             }
         });
     });
-});
+    

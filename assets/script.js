@@ -5,14 +5,12 @@ document.addEventListener('DOMContentLoaded', function () {
     stars.forEach(star => {
         star.addEventListener('mouseover', function () {
             const value = this.getAttribute('data-value');
-            // Highlight the current star and all next ones (from left to right)
             this.classList.add('hover');
             let nextSibling = this.nextElementSibling;
             while (nextSibling) {
                 nextSibling.classList.add('hover');
                 nextSibling = nextSibling.nextElementSibling;
             }
-            // Remove hover class from previous stars
             let previousSibling = this.previousElementSibling;
             while (previousSibling) {
                 previousSibling.classList.remove('hover');
@@ -23,14 +21,12 @@ document.addEventListener('DOMContentLoaded', function () {
         star.addEventListener('click', function () {
             const value = this.getAttribute('data-value');
             document.getElementById('rating').value = value;
-            // Mark the selected star and all next ones as selected (gold)
             this.classList.add('selected');
             let nextSibling = this.nextElementSibling;
             while (nextSibling) {
                 nextSibling.classList.add('selected');
                 nextSibling = nextSibling.nextElementSibling;
             }
-            // Remove selected class from previous stars
             let previousSibling = this.previousElementSibling;
             while (previousSibling) {
                 previousSibling.classList.remove('selected');
@@ -39,7 +35,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Feedback form submission
     const feedbackForm = document.getElementById('feedback-form');
     feedbackForm.addEventListener('submit', function (e) {
         e.preventDefault();
@@ -69,16 +64,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 // form error validation 
-// Select the form and error container
 const form = document.getElementById('feedback-form');
 const errorContainer = document.createElement('div');
 errorContainer.style.color = 'red';
 form.insertAdjacentElement('beforebegin', errorContainer);
 
-// Helper function to validate if text is only English
 const isEnglishText = (text) => /^[a-zA-Z0-9 .,!?'-]*$/.test(text);
 
-// Function to validate individual fields
 const validateField = (field) => {
     const fieldName = field.getAttribute('id');
     let error = '';
@@ -109,12 +101,11 @@ const validateField = (field) => {
     return error === '';
 };
 
-// Attach input events to fields for live validation
 form.querySelectorAll('input, textarea').forEach((field) => {
     field.addEventListener('input', () => validateField(field));
 });
 
-// Submit event
+
 form.addEventListener('submit', (event) => {
     let isValid = true;
     form.querySelectorAll('input, textarea').forEach((field) => {

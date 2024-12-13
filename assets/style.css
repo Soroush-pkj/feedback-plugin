@@ -92,7 +92,14 @@
 .star:hover ~ .star {
     color: gold;
 }
-
+#feedback-response{
+    color: green;
+    align-self: center;
+    align-content: center;
+    display: flex
+;
+    justify-content: center;
+}
 /* Responsive design */
 @media (max-width: 768px) {
     #feedback-form {

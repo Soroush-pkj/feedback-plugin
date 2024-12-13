@@ -26,7 +26,7 @@ function feedback_api_endpoints() {
 
 // Verify API Key for all routes
 function feedback_verify_api_key(WP_REST_Request $request) {
-    $api_key = $request->get_header('api-key'); // Get API Key from request header
+    $api_key = $request->get_header('api-key'); 
 
     if ($api_key && $api_key === FEEDBACK_API_KEY) {
         return true;

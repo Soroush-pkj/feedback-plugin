@@ -12,7 +12,7 @@ class Feedback_Admin
         add_menu_page(
             'Feedback Report',
             'Feedback Report',
-            'manage_feedback', // Custom capability
+            'manage_feedback', 
             'feedback-report',
             [__CLASS__, 'render_admin_page'],
             'dashicons-chart-bar',
@@ -50,7 +50,7 @@ class Feedback_Admin
 
             <form method="POST" id="bulk-delete-form" action="<?php echo admin_url('admin-post.php'); ?>">
 
-                <?php wp_nonce_field('feedback_admin_nonce'); ?> <!-- اضافه کردن nonce به فرم -->
+                <?php wp_nonce_field('feedback_admin_nonce'); ?> 
                 <input type="hidden" name="action" value="bulk_delete">
                 <table class="wp-list-table widefat fixed striped">
                     <thead>
@@ -88,7 +88,7 @@ class Feedback_Admin
         $total_pages = ceil($total_items / $items_per_page);
     
         if ($total_pages <= 1) {
-            return; // نیازی به صفحه‌بندی نیست
+            return; 
         }
     
         $page_links = [];
@@ -110,13 +110,13 @@ class Feedback_Admin
     global $wpdb;
     $table_name = $wpdb->prefix . 'feedback';
 
-    // تعداد رکورد در هر صفحه
+    
     $items_per_page = 5;
 
-    // شماره صفحه فعلی
+   
     $current_page = isset($_GET['paged']) && is_numeric($_GET['paged']) ? absint($_GET['paged']) : 1;
 
-    // محاسبه offset
+    
     $offset = ($current_page - 1) * $items_per_page;
 
     // Handle search query
@@ -127,8 +127,8 @@ class Feedback_Admin
     }
 
     // Handle sorting
-    $orderby_column = 'created_at'; // Default column
-    $order_direction = 'DESC'; // Default order
+    $orderby_column = 'created_at'; 
+    $order_direction = 'DESC'; 
 
     if (isset($_GET['orderby'])) {
         $allowed_columns = ['email', 'name', 'rating', 'date'];
@@ -141,10 +141,10 @@ class Feedback_Admin
 
     $orderby = "{$orderby_column} {$order_direction}";
 
-    // Fetch total count for pagination
+    
     $total_items = $wpdb->get_var("SELECT COUNT(*) FROM $table_name $search_query");
 
-    // Fetch entries with pagination
+    
     $entries = $wpdb->get_results($wpdb->prepare(
         "SELECT * FROM $table_name $search_query ORDER BY $orderby LIMIT %d OFFSET %d",
         $items_per_page,
@@ -175,19 +175,19 @@ class Feedback_Admin
             return;
         }
 
-        // Verify nonce
+        
         check_admin_referer('feedback_admin_nonce');
 
-        // Ensure the user has the proper capabilities
+        
 
         global $wpdb;
         $ids = array_map('intval', $_POST['bulk_delete_ids']);
         $table_name = $wpdb->prefix . 'feedback';
 
-        // Delete selected feedback entries
+        
         $wpdb->query("DELETE FROM $table_name WHERE id IN (" . implode(',', $ids) . ")");
 
-        // Redirect to prevent resubmission on refresh
+        
         wp_redirect(admin_url('admin.php?page=feedback-report'));
         exit;
     }
@@ -196,12 +196,12 @@ class Feedback_Admin
 
     public static function handle_chart_data()
     {
-        check_ajax_referer('feedback_admin_nonce', '_ajax_nonce'); // امنیت
+        check_ajax_referer('feedback_admin_nonce', '_ajax_nonce'); 
 
         global $wpdb;
         $table_name = $wpdb->prefix . 'feedback';
 
-        // محاسبه میانگین امتیاز هر روز در 7 روز گذشته
+        // chech average 7 days value
         $results = $wpdb->get_results("
             SELECT DATE(created_at) as date, AVG(rating) as avg_rating
             FROM $table_name
