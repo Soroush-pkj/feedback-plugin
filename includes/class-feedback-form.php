@@ -10,6 +10,7 @@ class Feedback_Form {
         ob_start();
         ?>
         <form id="feedback-form">
+        <div id="feedback-response"></div>
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" required>
             <label for="email">Email:</label>
@@ -25,7 +26,7 @@ class Feedback_Form {
             <input type="hidden" id="rating" name="rating" value="" required>
             <button type="submit">Submit</button>
         </form>
-        <div id="feedback-response"></div>
+        
         <?php
         return ob_get_clean();
     }
@@ -33,26 +34,41 @@ class Feedback_Form {
     
     public static function handle_form_submission() {
         global $wpdb;
-
-        // Validate and sanitize input
+    
+        
         $name = sanitize_text_field($_POST['name']);
         $email = sanitize_email($_POST['email']);
         $feedback = sanitize_textarea_field($_POST['feedback']);
         $rating = intval($_POST['rating']);
-
+    
+        
         if (empty($name) || empty($email) || empty($feedback) || $rating < 1 || $rating > 5) {
             wp_send_json_error(['message' => 'Invalid form submission.']);
         }
-
+    
+        
         $table_name = $wpdb->prefix . 'feedback';
-        $wpdb->insert($table_name, [
-            'name' => $name,
-            'email' => $email,
-            'feedback' => $feedback,
-            'rating' => $rating,
-            'created_at' => current_time('mysql'),
-        ]);
-
+    
+        
+        $wpdb->insert(
+            $table_name,
+            [
+                'name' => $name,
+                'email' => $email,
+                'feedback' => $feedback,
+                'rating' => $rating,
+                'created_at' => current_time('mysql'),
+            ],
+            [
+                '%s',
+                '%s',
+                '%s',
+                '%d',
+                '%s',
+            ]
+        );
+    
         wp_send_json_success(['message' => 'Feedback submitted successfully.']);
     }
+    
 }

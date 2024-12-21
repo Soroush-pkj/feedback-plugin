@@ -30,7 +30,7 @@ Feedback_Admin::init();
 add_action('wp_enqueue_scripts', 'mfp_enqueue_assets');
 function mfp_enqueue_assets() {
     wp_enqueue_style('mfp-style', plugin_dir_url(__FILE__) . 'assets/style.css');
-    wp_enqueue_script('mfp-script', plugin_dir_url(__FILE__) . 'assets/script.js', ['jquery'], null, true);
+    wp_enqueue_script('mfp-script', plugin_dir_url(__FILE__) . 'assets/script.js', [], null, true);
     wp_localize_script('mfp-script', 'mfp_ajax', ['ajax_url' => admin_url('admin-ajax.php')]);
 }
 

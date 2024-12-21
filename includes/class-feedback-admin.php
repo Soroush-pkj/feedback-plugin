@@ -12,7 +12,7 @@ class Feedback_Admin
         add_menu_page(
             'Feedback Report',
             'Feedback Report',
-            'manage_feedback', 
+            'manage_feedback',
             'feedback-report',
             [__CLASS__, 'render_admin_page'],
             'dashicons-chart-bar',
@@ -27,10 +27,8 @@ class Feedback_Admin
         }
 
         wp_enqueue_style('feedback-admin-style', plugin_dir_url(__FILE__) . '../assets/style.css');
-        // wp_enqueue_script('feedback-chart-js', plugin_dir_url(__FILE__) . '../assets/chart.js', [], null, true);
-        wp_enqueue_script('feedback-chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', [], null, true);
-
-        wp_enqueue_script('feedback-admin-script', plugin_dir_url(__FILE__) . '../assets/admin.js', ['jquery'], null, true);
+        wp_enqueue_script('feedback-chart-js', plugin_dir_url(__FILE__) . '../assets/chart.js', [], null, true);
+        wp_enqueue_script('feedback-admin-script', plugin_dir_url(__FILE__) . '../assets/admin.js', [], null, true);
         wp_localize_script('feedback-admin-script', 'feedbackAjax', [
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce'    => wp_create_nonce('feedback_admin_nonce'),
@@ -50,7 +48,7 @@ class Feedback_Admin
 
             <form method="POST" id="bulk-delete-form" action="<?php echo admin_url('admin-post.php'); ?>">
 
-                <?php wp_nonce_field('feedback_admin_nonce'); ?> 
+                <?php wp_nonce_field('feedback_admin_nonce'); ?>
                 <input type="hidden" name="action" value="bulk_delete">
                 <table class="wp-list-table widefat fixed striped">
                     <thead>
@@ -63,6 +61,7 @@ class Feedback_Admin
                             <th><a href="?page=feedback-report&orderby=email&order=<?php echo $current_order; ?>">Email</a></th>
                             <th><a href="?page=feedback-report&orderby=name&order=<?php echo $current_order; ?>">Name</a></th>
                             <th><a href="?page=feedback-report&orderby=rating&order=<?php echo $current_order; ?>">Rating</a></th>
+                            <th><a href="?page=feedback-report&orderby=feedback&order=<?php echo $current_order; ?>">Feedback</a></th>
                             <th><a href="?page=feedback-report&orderby=created_at&order=<?php echo $current_order; ?>">Date</a></th>
 
                         </tr>
@@ -86,13 +85,13 @@ class Feedback_Admin
     private static function render_pagination($total_items, $items_per_page, $current_page)
     {
         $total_pages = ceil($total_items / $items_per_page);
-    
+
         if ($total_pages <= 1) {
-            return; 
+            return;
         }
-    
+
         $page_links = [];
-    
+
         for ($i = 1; $i <= $total_pages; $i++) {
             $page_links[] = sprintf(
                 '<a class="pagination-link %s" href="?page=feedback-report&paged=%d">%d</a>',
@@ -101,70 +100,71 @@ class Feedback_Admin
                 $i
             );
         }
-    
+
         echo '<div class="pagination">' . implode(' | ', $page_links) . '</div>';
     }
-    
+
     private static function list_feedback_entries()
-{
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'feedback';
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'feedback';
 
-    
-    $items_per_page = 5;
 
-   
-    $current_page = isset($_GET['paged']) && is_numeric($_GET['paged']) ? absint($_GET['paged']) : 1;
+        $items_per_page = 5;
 
-    
-    $offset = ($current_page - 1) * $items_per_page;
 
-    // Handle search query
-    $search_query = '';
-    if (!empty($_GET['search'])) {
-        $search = sanitize_text_field($_GET['search']);
-        $search_query = $wpdb->prepare("WHERE name LIKE %s OR email LIKE %s", "%$search%", "%$search%");
+        $current_page = isset($_GET['paged']) && is_numeric($_GET['paged']) ? absint($_GET['paged']) : 1;
+
+
+        $offset = ($current_page - 1) * $items_per_page;
+
+        // Handle search query
+        $search_query = '';
+        if (!empty($_GET['search'])) {
+            $search = sanitize_text_field($_GET['search']);
+            $search_query = $wpdb->prepare("WHERE name LIKE %s OR email LIKE %s", "%$search%", "%$search%");
+        }
+
+        // Handle sorting
+        $orderby_column = 'created_at';
+        $order_direction = 'DESC';
+
+        if (isset($_GET['orderby'])) {
+            $allowed_columns = ['email', 'name', 'rating','feedback' , 'date'];
+            $orderby_column = in_array($_GET['orderby'], $allowed_columns) ? sanitize_text_field($_GET['orderby']) : 'created_at';
+        }
+
+        if (isset($_GET['order']) && in_array(strtoupper($_GET['order']), ['ASC', 'DESC'])) {
+            $order_direction = strtoupper($_GET['order']);
+        }
+
+        $orderby = "{$orderby_column} {$order_direction}";
+
+
+        $total_items = $wpdb->get_var("SELECT COUNT(*) FROM $table_name $search_query");
+
+
+        $entries = $wpdb->get_results($wpdb->prepare(
+            "SELECT * FROM $table_name $search_query ORDER BY $orderby LIMIT %d OFFSET %d",
+            $items_per_page,
+            $offset
+        ));
+
+        // Render table rows
+        foreach ($entries as $entry) {
+            echo '<tr>';
+            echo '<td><input type="checkbox" name="bulk_delete_ids[]" value="' . esc_attr($entry->id) . '"></td>';
+            echo '<td>' . esc_html($entry->email) . '</td>';
+            echo '<td>' . esc_html($entry->name) . '</td>';
+            echo '<td>' . esc_html($entry->rating) . '</td>';
+            echo '<td>' . esc_html($entry->feedback) . '</td>';
+            echo '<td>' . esc_html($entry->created_at) . '</td>';
+            echo '</tr>';
+        }
+
+        // Render pagination links
+        self::render_pagination($total_items, $items_per_page, $current_page);
     }
-
-    // Handle sorting
-    $orderby_column = 'created_at'; 
-    $order_direction = 'DESC'; 
-
-    if (isset($_GET['orderby'])) {
-        $allowed_columns = ['email', 'name', 'rating', 'date'];
-        $orderby_column = in_array($_GET['orderby'], $allowed_columns) ? sanitize_text_field($_GET['orderby']) : 'created_at';
-    }
-
-    if (isset($_GET['order']) && in_array(strtoupper($_GET['order']), ['ASC', 'DESC'])) {
-        $order_direction = strtoupper($_GET['order']);
-    }
-
-    $orderby = "{$orderby_column} {$order_direction}";
-
-    
-    $total_items = $wpdb->get_var("SELECT COUNT(*) FROM $table_name $search_query");
-
-    
-    $entries = $wpdb->get_results($wpdb->prepare(
-        "SELECT * FROM $table_name $search_query ORDER BY $orderby LIMIT %d OFFSET %d",
-        $items_per_page,
-        $offset
-    ));
-
-    // Render table rows
-    foreach ($entries as $entry) {
-        echo '<tr>';
-        echo '<td><input type="checkbox" name="bulk_delete_ids[]" value="' . esc_attr($entry->id) . '"></td>';
-        echo '<td>' . esc_html($entry->email) . '</td>';
-        echo '<td>' . esc_html($entry->name) . '</td>';
-        echo '<td>' . esc_html($entry->rating) . '</td>';
-        echo '<td>' . esc_html($entry->created_at) . '</td>';
-        echo '</tr>';
-    }
-
-    // Render pagination links
-    self::render_pagination($total_items, $items_per_page, $current_page);
-}
 
 
 
@@ -175,19 +175,19 @@ class Feedback_Admin
             return;
         }
 
-        
+
         check_admin_referer('feedback_admin_nonce');
 
-        
+
 
         global $wpdb;
         $ids = array_map('intval', $_POST['bulk_delete_ids']);
         $table_name = $wpdb->prefix . 'feedback';
 
-        
+
         $wpdb->query("DELETE FROM $table_name WHERE id IN (" . implode(',', $ids) . ")");
 
-        
+
         wp_redirect(admin_url('admin.php?page=feedback-report'));
         exit;
     }
@@ -196,7 +196,7 @@ class Feedback_Admin
 
     public static function handle_chart_data()
     {
-        check_ajax_referer('feedback_admin_nonce', '_ajax_nonce'); 
+        check_ajax_referer('feedback_admin_nonce', '_ajax_nonce');
 
         global $wpdb;
         $table_name = $wpdb->prefix . 'feedback';
