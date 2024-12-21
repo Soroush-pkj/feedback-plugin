@@ -54,7 +54,7 @@ class Feedback_Admin
                     <thead>
                         <tr>
 
-                            <th><input type="checkbox" id="select-all"></th>
+                            <th  class="manage-column column-cb check-column" id="sf-check-all"><input type="checkbox" id="select-all"></th>
                             <?php
                             $current_order = isset($_GET['order']) && $_GET['order'] === 'asc' ? 'desc' : 'asc';
                             ?>
